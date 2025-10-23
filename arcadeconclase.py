@@ -3,32 +3,33 @@ import arcade
 Ancho= 800
 Alto=600
 Titulo="Mi ventana"
-
-class MiVentana(arcade.Window):
+global xPlayer
+xPlayer=Ancho//2
+global yPlayer
+yPlayer=Alto//2
+class GameView(arcade.View):
     def __init__(self):
-        super().__init__(Ancho, Alto, Titulo)
-        arcade.set_background_color((255,255,255))
-        self.recAnc=150
-        self.recAlt=150
-        self.recY=50
-        self.recX=300
+        super().__init__()
+        self.player_list=arcade.SpriteList()
+        self.player_sprite=arcade.Sprite("Assets/thelost.png",1)
+        self.player_sprite.center_x=xPlayer
+        self.player_sprite.center_y=yPlayer
+        self.player_list.append(self.player_sprite)
         self.velocidad=5*60
         self.texto="hola"
-
         self.izquierda=False
         self.derecha=False
         self.arriba=False
         self.abajo=False
     def on_draw(self):
-        arcade.draw_text(self.texto,
-                         Ancho//2,
-                         Alto//2,
-                         arcade.color.BLACK,
-                         24,
-                         anchor_x="center")
         self.clear()
-        arcade.draw_lbwh_rectangle_filled(self.recX,self.recY,self.recAnc,self.recAlt,(90,132,23))
-        
+        arcade.draw_text(self.texto,
+                        Ancho//2,
+                        Alto//2,
+                        arcade.color.YELLOW,
+                        24,
+                        anchor_x="center")
+        self.player_list.draw()
     def on_key_press(self, symbol, modifiers):
         if symbol==arcade.key.A:
             self.izquierda=True
@@ -38,7 +39,6 @@ class MiVentana(arcade.Window):
             self.abajo=True
         elif symbol==arcade.key.D:
             self.derecha=True
-
     def on_key_release(self, symbol, modifiers):
         if symbol==arcade.key.A:
             self.izquierda=False
@@ -47,9 +47,7 @@ class MiVentana(arcade.Window):
         elif symbol==arcade.key.S:
             self.abajo=False
         elif symbol==arcade.key.D:
-            self.derecha=False
-            
-            
+            self.derecha=False    
     def on_update(self,delta_time):
         dx=0
         dy=0
@@ -61,13 +59,26 @@ class MiVentana(arcade.Window):
             dy+=self.velocidad*delta_time
         if self.abajo==True:
             dy-=self.velocidad*delta_time
-        self.recX+=dx
-        self.recY+=dy
-        self.recX = min(max(0, self.recX), Ancho - self.recAnc)
-        self.recY = min(max(0, self.recY), Alto - self.recAlt)
-
-            
-        
+        self.player_sprite.center_x+=dx
+        self.player_sprite.center_y+=dy
+        halfW=self.player_sprite.width/2
+        halfH=self.player_sprite.height/2
+        self.player_sprite.center_x = min(max(halfW, self.player_sprite.center_x), Ancho - halfW)
+        self.player_sprite.center_y= min(max(halfH, self.player_sprite.center_y), Alto - halfH)
+    def on_show_view(self):
+        arcade.set_background_color(arcade.color.AMAZON)
+class MenuView(arcade.View):
+    def __init__(self):
+        super().__init__()
+    def on_show_view(self):
+        arcade.set_background_color(arcade.color.AMAZON)
+    def on_draw(self):
+        self.clear()
+        arcade.draw_text("Pulsa ENTER para jugar",Ancho//2,Alto//2,arcade.color.YELLOW,24,anchor_x="center")
+    def on_key_press(self, symbol, modifiers):
+        if symbol==arcade.key.ENTER:
+            ventana.show_view(GameView())
 if __name__ =="__main__":
-    ventana=MiVentana()
+    ventana=arcade.Window(Ancho,Alto,Titulo)
+    ventana.show_view(MenuView())
     arcade.run()
