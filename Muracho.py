@@ -19,6 +19,7 @@ class GameView(arcade.View):
         self.player_sprite.center_x=xPlayer
         self.player_sprite.center_y=yPlayer
         self.player_list.append(self.player_sprite)
+        self.tiempo=0.0
         self.velocidad=5*60
         self.texto="hola"
         self.izquierda=False
@@ -43,8 +44,14 @@ class GameView(arcade.View):
                 wall.center_y=y
                 self.lista_ladrillos.append(wall)
     def on_draw(self):
+        minutos:int =self.tiempo//60
+        segundos=self.tiempo%60
+        segundos=round(segundos,2)
+        str1=f"tiempo: "+str(minutos)+":"+str(segundos)
         self.clear()
         self.lista_ladrillos.draw()
+        arcade.draw_text(str1,700,0,arcade.color.YELLOW,24,anchor_x="center")
+        
         self.player_list.draw()
         self.lista_dineros.draw()
     def on_key_press(self, symbol, modifiers):
@@ -66,6 +73,7 @@ class GameView(arcade.View):
         elif symbol==arcade.key.D:
             self.derecha=False    
     def on_update(self,delta_time):
+        self.tiempo+=delta_time
         dx=0
         dy=0
         if self.izquierda==True:
@@ -90,6 +98,8 @@ def main():
     game.setup()
     Window.show_view(game)
     arcade.run()
+
+
 
 if __name__=="__main__":
     main()
