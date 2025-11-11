@@ -138,6 +138,8 @@ class GameView(arcade.View):
         tear.change_y = dir_y * self.tear_speed
         self.lagrimas_list.append(tear)
 
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.player_sprite.position=x,y     
     def on_update(self,delta_time):
         # cronómetro
         self.tiempo += delta_time
